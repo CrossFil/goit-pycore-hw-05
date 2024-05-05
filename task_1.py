@@ -1,4 +1,6 @@
+'''Module description'''
 def caching_fibonacci():
+    '''docstring'''
     cache = {}
 
     def fibonacci(n):

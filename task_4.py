@@ -41,19 +41,61 @@ def show_all_contacts(contacts):
         return "No contacts available."
     else:
         return "\n".join([f"{name}: {phone}" for name, phone in contacts.items()])
-    
+
 def input_error(func):
     '''декоратор обробки помилок'''
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except KeyError
+        except KeyError:
             return 'Invalid command. Enter a valid command.'
-        except ValueError
+        except ValueError:
             return 'Invalid arguments. Please provide valid arguments.'
-        except IndexError
+        except IndexError:
             return 'Invalid arguments. Please provide all necessary arguments.'
     return inner
+
+@input_error
+def add_contacts_decorated(args, contacts):
+    '''chek for error'''
+    if len(args) != 2:
+        raise ValueError
+    name, phone = args
+    contacts[name] = phone
+    return 'Contact added.'
+
+@input_error
+def change_contact_decorated(args, contacts):
+    '''chek for error'''
+    if len(args) != 2:
+        raise IndexError
+    name, phone = args
+    contacts[name] = phone
+    if name in contacts:
+        contacts[name] = phone
+        return f'Phone numer updated for {name}.'
+    else:
+        raise KeyError(name)
+
+@input_error
+def get_phone_decorated(args, contacts):
+    '''chek for error'''
+    if len(args) != 1:
+        raise IndexError
+    name = args[0]
+    if name in contacts:
+        return f'Phone numer for {name}: {contacts[name]}'
+    else:
+        return KeyError(name)
+
+@input_error
+def show_all_contacts_decorated(contacts):
+    '''chek for error'''
+    if not contacts:
+        return 'No contacts available.'
+    else:
+        return '\n'.join([f'{name}: {phone}' for name, phone in contacts.items()])
+
 
 def main():
     '''точка входу'''
@@ -69,13 +111,13 @@ def main():
         elif command == "hello":
             print("How can I help you?")
         elif command == "add":
-            print(add_contact(args, contacts))
+            print(add_contacts_decorated(args, contacts))
         elif command == "change":
-            print(change_contact(args, contacts))
+            print(change_contact_decorated(args, contacts))
         elif command == "phone":
-            print(get_phone(args, contacts))
+            print(get_phone_decorated(args, contacts))
         elif command == "all":
-            print(show_all_contacts(contacts))
+            print(show_all_contacts_decorated(contacts))
         else:
             print("Invalid command.")
 
